@@ -212,17 +212,20 @@ public static String getToken() {
   //  Ensure all tests are passing using below command
   //  ./gradlew test --tests ModuleThreeRefactorTest
   static Double getOpeningPriceOnStartDate(List<Candle> candles) {
-     return 0.0;
+     return candles.get(0).getOpen();
   }
 
 
   public static Double getClosingPriceOnEndDate(List<Candle> candles) {
-     return 0.0;
+     return candles.get(candles.size() - 1).getClose();
   }
 
 
   public static List<Candle> fetchCandles(PortfolioTrade trade, LocalDate endDate, String token) {
-     return Collections.emptyList();
+    RestTemplate restTemplate = new RestTemplate();
+    String tiingoRestUrl = prepareUrl(trade, endDate, token);
+    TiingoCandle[] tiingoCandleArray = restTemplate.getForObject(tiingoRestUrl, TiingoCandle[].class);
+     return Arrays.stream(tiingoCandleArray).collect(Collectors.toList());
   }
 
   public static List<AnnualizedReturn> mainCalculateSingleReturn(String[] args)
@@ -232,12 +235,13 @@ public static String getToken() {
         LocalDate localDate = LocalDate.parse(args[1]);
         for (PortfolioTrade portfolioTrade : portfolioTrades) {
           List<Candle> candles = fetchCandles(portfolioTrade, localDate, getToken());
-          AnnualizedReturn annualizedReturn = calculateAnnualizedReturns(localDate, portfolioTrade, getOpeningPriceOnStartDate(candles), getClosingPriceOnEndDate(candles));
+          AnnualizedReturn annualizedReturn = calculateAnnualizedReturns(localDate, portfolioTrade,
+              getOpeningPriceOnStartDate(candles), getClosingPriceOnEndDate(candles));
           annualizedReturns.add(annualizedReturn);
         }
-     return annualizedReturns.stream()
-        .sorted((a1, a2) -> Double.compare(a2.getAnnualizedReturn(), a1.getAnnualizedReturn()))
-        .collect(Collectors.toList());
+        return annualizedReturns.stream()
+            .sorted((a1, a2) -> Double.compare(a2.getAnnualizedReturn(), a1.getAnnualizedReturn()))
+            .collect(Collectors.toList());
   }
 
   // TODO: CRIO_TASK_MODULE_CALCULATIONS
@@ -254,7 +258,7 @@ public static String getToken() {
 
   public static AnnualizedReturn calculateAnnualizedReturns(LocalDate endDate,
       PortfolioTrade trade, Double buyPrice, Double sellPrice) {
-      double total_num_years = ChronoUnit.DAYS.between(trade.getPurchaseDate(), endDate) / 365.24;
+      double total_num_years = ChronoUnit.DAYS.between(trade.getPurchaseDate(), endDate) / 365.2422;
       double totalReturns = (sellPrice - buyPrice) / buyPrice;
       double annualized_returns = Math.pow((1.0 + totalReturns), (1.0 / total_num_years)) - 1;
       return new AnnualizedReturn(trade.getSymbol(),annualized_returns, totalReturns);
@@ -279,7 +283,7 @@ public static String getToken() {
     //printJsonObject(mainReadFile(args));
 
 
-    printJsonObject(mainReadQuotes(args));
+    //printJsonObject(mainReadQuotes(args));
 
 
 
