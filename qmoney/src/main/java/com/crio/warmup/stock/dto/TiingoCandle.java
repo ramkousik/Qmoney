@@ -2,13 +2,7 @@
 package com.crio.warmup.stock.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.web.client.RestTemplate;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import javax.print.attribute.URISyntax;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TiingoCandle implements Candle {
