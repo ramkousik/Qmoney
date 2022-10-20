@@ -5,6 +5,8 @@ package com.crio.warmup.stock;
 import com.crio.warmup.stock.dto.*;
 import com.crio.warmup.stock.log.UncaughtExceptionHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.crio.warmup.stock.portfolio.PortfolioManager;
+import com.crio.warmup.stock.portfolio.PortfolioManagerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
@@ -71,6 +73,7 @@ public class PortfolioManagerApplication {
   // Note:
   // 1. You may need to copy relevant code from #mainReadQuotes to parse the Json.
   // 2. Remember to get the latest quotes from Tiingo API.
+
 
 
 
@@ -261,7 +264,7 @@ public static String getToken() {
       double total_num_years = ChronoUnit.DAYS.between(trade.getPurchaseDate(), endDate) / 365.2422;
       double totalReturns = (sellPrice - buyPrice) / buyPrice;
       double annualized_returns = Math.pow((1.0 + totalReturns), (1.0 / total_num_years)) - 1;
-      return new AnnualizedReturn(trade.getSymbol(),annualized_returns, totalReturns);
+      return new AnnualizedReturn(trade.getSymbol(),annualized_returns, totalReturns);  
   }
 
   
@@ -271,6 +274,38 @@ public static String getToken() {
 
 
 
+
+
+
+
+
+
+  // TODO: CRIO_TASK_MODULE_REFACTOR
+  //  Once you are done with the implementation inside PortfolioManagerImpl and
+  //  PortfolioManagerFactory, create PortfolioManager using PortfolioManagerFactory.
+  //  Refer to the code from previous modules to get the List<PortfolioTrades> and endDate, and
+  //  call the newly implemented method in PortfolioManager to calculate the annualized returns.
+
+  // Note:
+  // Remember to confirm that you are getting same results for annualized returns as in Module 3.
+
+  public static List<AnnualizedReturn> mainCalculateReturnsAfterRefactor(String[] args)
+      throws Exception {
+       String file = args[0];
+       LocalDate endDate = LocalDate.parse(args[1]);
+       String contents = readFileAsString(file);
+       ObjectMapper objectMapper = getObjectMapper();
+       PortfolioManager portfolioManager = PortfolioManagerFactory.getPortfolioManager(new RestTemplate());
+       List <PortfolioTrade> portfolioTrades = objectMapper.readValue(contents, new TypeReference<List<PortfolioTrade>>() {
+        
+       });
+       return portfolioManager.calculateAnnualizedReturn(portfolioTrades, endDate);
+  }
+
+
+  private static String readFileAsString(String fileName) throws IOException, URISyntaxException {
+    return new String(Files.readAllBytes(resolveFileFromResources(fileName).toPath()), "UTF-8");
+  }
 
 
 
@@ -289,6 +324,10 @@ public static String getToken() {
 
     printJsonObject(mainCalculateSingleReturn(args));
 
+
+
+
+    printJsonObject(mainCalculateReturnsAfterRefactor(args));
   }
 }
 
