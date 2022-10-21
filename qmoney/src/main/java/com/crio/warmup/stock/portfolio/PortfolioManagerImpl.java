@@ -53,13 +53,7 @@ public class PortfolioManagerImpl implements PortfolioManager {
 
   //CHECKSTYLE:OFF
 
-  private AnnualizedReturn calculateAnnualizedReturns(LocalDate endDate, PortfolioTrade trade,
-      Double buyPrice, Double sellPrice) {
-    double total_num_years = DAYS.between(trade.getPurchaseDate(), endDate) / 365.2422;
-    double totalReturns = (sellPrice - buyPrice) / buyPrice;
-    double annualized_returns = Math.pow((1.0 + totalReturns), (1.0 / total_num_years)) - 1;
-    return new AnnualizedReturn(trade.getSymbol(), annualized_returns, totalReturns);
-  }
+
 
 
 
@@ -101,6 +95,8 @@ public class PortfolioManagerImpl implements PortfolioManager {
     return candles.get(candles.size() - 1).getClose();
   }
 
+  
+
   @Override
   public List<AnnualizedReturn> calculateAnnualizedReturn(List<PortfolioTrade> portfolioTrades,
       LocalDate endDate) throws JsonProcessingException {
@@ -116,5 +112,11 @@ public class PortfolioManagerImpl implements PortfolioManager {
     return annualizedReturns.stream().sorted(getComparator()).collect(Collectors.toList());
   }
 
-
+  private AnnualizedReturn calculateAnnualizedReturns(LocalDate endDate, PortfolioTrade trade,
+      Double buyPrice, Double sellPrice) {
+    double total_num_years = DAYS.between(trade.getPurchaseDate(), endDate) / 365.2422;
+    double totalReturns = (sellPrice - buyPrice) / buyPrice;
+    double annualized_returns = Math.pow((1.0 + totalReturns), (1.0 / total_num_years)) - 1;
+    return new AnnualizedReturn(trade.getSymbol(), annualized_returns, totalReturns);
+  }
 }

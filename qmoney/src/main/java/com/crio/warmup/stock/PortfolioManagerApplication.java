@@ -226,9 +226,10 @@ public static String getToken() {
 
   public static List<Candle> fetchCandles(PortfolioTrade trade, LocalDate endDate, String token) {
     RestTemplate restTemplate = new RestTemplate();
-    String tiingoRestUrl = prepareUrl(trade, endDate, token);
-    TiingoCandle[] tiingoCandleArray = restTemplate.getForObject(tiingoRestUrl, TiingoCandle[].class);
-     return Arrays.stream(tiingoCandleArray).collect(Collectors.toList());
+    String tiingoRestURL = prepareUrl(trade, endDate, token);
+    TiingoCandle[] tiingoCandleArray =
+        restTemplate.getForObject(tiingoRestURL, TiingoCandle[].class);
+    return Arrays.stream(tiingoCandleArray).collect(Collectors.toList());
   }
 
   public static List<AnnualizedReturn> mainCalculateSingleReturn(String[] args)
