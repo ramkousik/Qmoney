@@ -57,6 +57,7 @@ public class PortfolioManagerImpl implements PortfolioManager {
 
 
 
+
   private Comparator<AnnualizedReturn> getComparator() {
     return Comparator.comparing(AnnualizedReturn::getAnnualizedReturn).reversed();
   }
@@ -119,4 +120,7 @@ public class PortfolioManagerImpl implements PortfolioManager {
     double annualized_returns = Math.pow((1.0 + totalReturns), (1.0 / total_num_years)) - 1;
     return new AnnualizedReturn(trade.getSymbol(), annualized_returns, totalReturns);
   }
+
+
+
 }
