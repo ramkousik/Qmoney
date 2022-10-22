@@ -14,7 +14,7 @@ public class PortfolioManagerFactory {
   //    return new PortfolioManagerImpl(restTemplate);
 
   public static PortfolioManager getPortfolioManager(RestTemplate restTemplate) {
-    return null;
+    return new PortfolioManagerImpl(restTemplate);
 
   }
 
